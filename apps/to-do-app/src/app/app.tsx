@@ -1,9 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import styles from './app.module.scss';
+import classes from './app.module.scss';
+import Register from './Register/Register';
 
 export function App() {
+  const { formContainer } = classes;
+
   return (
-   <h1>Hello world!</h1>
+    <div className={ formContainer }>
+      <Register />
+    </div>
   );
 }
 
