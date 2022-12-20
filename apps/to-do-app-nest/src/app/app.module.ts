@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { AuthModule } from '../auth/auth.module';
 import { User } from '../users/user.model';
 import { UsersModule } from '../users/users.module';
 
@@ -9,6 +10,7 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
+    AuthModule,
     UsersModule,
     ConfigModule.forRoot({ isGlobal: true }),
     SequelizeModule.forRoot({

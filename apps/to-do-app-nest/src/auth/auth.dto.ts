@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, MinLength } from "class-validator";
 
-export class UserDTO {
+export class AuthDTO {
     @IsString()
     @IsNotEmpty()
     @MinLength(4)
@@ -10,9 +10,4 @@ export class UserDTO {
     @IsNotEmpty()
     @MinLength(8)
     password: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(8)
-    passwordConfirm: string;
 }

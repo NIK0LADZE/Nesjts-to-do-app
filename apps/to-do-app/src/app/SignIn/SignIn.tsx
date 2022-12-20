@@ -7,21 +7,21 @@ export function SignIn(props: SignInProps) {
     event.preventDefault();
 
     (async () => {
-      const response = await fetch('http://localhost:3000/users', {
+      const response = await fetch('http://localhost:3000/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
-      const data = await response.json();
+      const { message } = await response.json();
 
       if (!response.ok) {
-        alert(data.message)
+        alert(message)
         return;
       }
 
       (event.target as HTMLFormElement).reset();
-      alert('Registration was successful!');
+      alert(message);
     })();
   }
 
