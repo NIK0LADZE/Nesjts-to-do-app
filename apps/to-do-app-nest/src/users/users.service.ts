@@ -12,26 +12,19 @@ export class UsersService {
     ) {}
 
     create(UserDTO: UserDTO): Promise<User> {
-        const hashedPassword = bcryptPassword(UserDTO.password);
-        console.log(UserDTO);
-        console.log(hashedPassword);
-        
-        
+        const { username, password } = UserDTO;
+        const hashedPassword = bcryptPassword(password);
 
         return this.userModel.create({
-            username: UserDTO.username,
+            username: username,
             password: hashedPassword
         })
     }
 
-    async findAll(): Promise<User[]> {
-        return this.userModel.findAll();
-    }
-
-    findOne(id: string): Promise<User> {
-        return this.userModel.findOne({
+    async findByUsername(username: string): Promise<User> {
+        return await this.userModel.findOne({
             where: {
-                id,
+                username
             }
         })
     }

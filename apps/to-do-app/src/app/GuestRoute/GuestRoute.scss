@@ -1,0 +1,31 @@
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.Menu {
+    display: flex;
+    justify-content: space-between;
+    width: 120px;
+    margin-bottom: 20px;
+
+    .Link {
+        color: black;
+        text-decoration: none;
+
+        &-Active {
+            font-weight: bold;
+        }
+
+        &:first-child {
+            &::after {
+                content: '|';
+                color: black;
+                margin-left: 8px;
+            }
+        }
+    }
+}

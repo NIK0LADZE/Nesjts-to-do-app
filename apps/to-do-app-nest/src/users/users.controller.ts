@@ -1,22 +1,32 @@
-import { BadRequestException, Body, Controller, Get, Post } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Post, Res } from "@nestjs/common";
 import { UserDTO } from "./user.dto";
-import { User } from "./user.model";
 import { UsersService } from "./users.service";
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
     @Post()
-    addUser(@Body() user: UserDTO) {
+    addUser(@Body() user: UserDTO, @Res() res) {
+        const { username, password, passwordConfirm } = user;
         console.log(user);
-        if (user.password !== user.passwordConfirm) {
-            throw new BadRequestException(['Passwords don\'t match'])
+        if (password !== passwordConfirm) {
+            throw new BadRequestException(['Passwords don\'t match']);
         }
-        return this.usersService.create(user);
-    }
 
-    @Get()
-    test() {
-        return this.usersService.findAll();
+        this.usersService.findByUsername(username).then(foundUser => {
+            const errorStack = {
+                statusCode: 400,
+                message: ['This username already exists'],
+                error: 'Bad Request'
+            }
+
+            if (foundUser) return res.status(400).json(errorStack).send();
+
+            // ქვემოთ რაც წერია მაგით მინდოდა გამესროლა მარა პრომისში რომ არის აპი იქრაშება თვითონ
+            // if (user) throw new BadRequestException(['This username already exists']);
+
+            this.usersService.create(user);
+            res.status(200).json({ message: 'Registration was successful!'}).send();
+        }).catch((error) => console.log(error));
     }
 }

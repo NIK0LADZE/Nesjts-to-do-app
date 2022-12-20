@@ -1,10 +1,7 @@
-import { useNavigate } from "react-router-dom";
-
 /* eslint-disable-next-line */
-export interface RegisterProps {};
+export interface SignInProps {};
 
-export function Register(props: RegisterProps) {
-  const navigate = useNavigate();
+export function SignIn(props: SignInProps) {
   const submitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
     const formData = Object.fromEntries(new FormData(event.currentTarget));
     event.preventDefault();
@@ -16,16 +13,15 @@ export function Register(props: RegisterProps) {
         body: JSON.stringify(formData)
       });
 
-      const { message } = await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
-        alert(message)
+        alert(data.message)
         return;
       }
 
       (event.target as HTMLFormElement).reset();
-      navigate('sign-in');
-      alert(message);
+      alert('Registration was successful!');
     })();
   }
 
@@ -33,10 +29,9 @@ export function Register(props: RegisterProps) {
     <form method='post' onSubmit={ submitHandler }>
       <input className='form-control' type='text' name='username' placeholder='Enter your username' />
       <input className='form-control' type='password' name='password' placeholder='Enter your password' />
-      <input className='form-control' type='password' name='passwordConfirm' placeholder='Repeat your password' />
-      <button>Sign up</button>
+      <button>Sign in</button>
     </form>
   );
 }
 
-export default Register;
+export default SignIn;

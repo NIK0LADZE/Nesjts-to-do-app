@@ -1,15 +1,28 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import classes from './app.module.scss';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import GuestRoute from './GuestRoute/GuestRoute';
 import Register from './Register/Register';
+import SignIn from './SignIn/SignIn';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <GuestRoute />,
+    children: [
+      {
+        path: "/",
+        element: <Register />
+      },
+      {
+        path: "sign-in",
+        element: <SignIn />
+      }
+    ]
+  }
+])
 
 export function App() {
-  const { formContainer } = classes;
-
-  return (
-    <div className={ formContainer }>
-      <Register />
-    </div>
-  );
+  return (<RouterProvider router={router} />);
 }
 
 export default App;
