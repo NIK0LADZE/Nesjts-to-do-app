@@ -1,4 +1,4 @@
-import {registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator';
+import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator';
 
 export const Match = (property: string, validationOptions?: ValidationOptions) => {
     return (object: object, propertyName: string) => {
@@ -9,7 +9,7 @@ export const Match = (property: string, validationOptions?: ValidationOptions) =
             constraints: [property],
             options: validationOptions,
             validator: {
-                validate(value: string, args: ValidationArguments) {
+                validate(value: string, args: ValidationArguments): boolean {
                     const [relatedPropertyName] = args.constraints;
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const relatedValue = (args.object as any)[relatedPropertyName];

@@ -6,12 +6,14 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { useContainer } from 'class-validator';
 
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { abortOnError: false });
   const port = process.env.PORT || 3000;
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

@@ -1,11 +1,13 @@
 import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
-import { Match } from "./match.decorator";
+import { Match } from "./decorators/Match.decorator";
+import { IsUsernameUnique } from "./decorators/IsUsernameUnique.decorator";
 
 export class UserDTO {
     @IsString()
     @IsNotEmpty()
     @MinLength(4)
     @MaxLength(20)
+    @IsUsernameUnique({ message: 'User $value already exists. Choose another name.'})
     username: string;
 
     @IsString()
