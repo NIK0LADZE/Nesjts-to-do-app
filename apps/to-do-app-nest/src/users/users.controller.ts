@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, Res } from "@nestjs/common";
+import { Body, Controller, Post, Res } from "@nestjs/common";
 import { UserDTO } from "./user.dto";
 import { UsersService } from "./users.service";
 
@@ -7,11 +7,8 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
     @Post()
     addUser(@Body() user: UserDTO, @Res() res) {
-        const { username, password, passwordConfirm } = user;
+        const { username } = user;
         console.log(user);
-        if (password !== passwordConfirm) {
-            throw new BadRequestException(['Passwords don\'t match']);
-        }
 
         this.usersService.findByUsername(username).then(foundUser => {
             const errorStack = {

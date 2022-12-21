@@ -1,24 +1,21 @@
-import {registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface} from 'class-validator';
+import {registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator';
 
-export function Match(property: string, validationOptions?: ValidationOptions) {
-    return (object: any, propertyName: string) => {
+export const Match = (property: string, validationOptions?: ValidationOptions) => {
+    return (object: object, propertyName: string) => {
         registerDecorator({
+            name: 'Match',
             target: object.constructor,
             propertyName,
-            options: validationOptions,
             constraints: [property],
-            validator: MatchConstraint,
-        });
-    };
-}
-
-@ValidatorConstraint({name: 'Match'})
-export class MatchConstraint implements ValidatorConstraintInterface {
-
-    validate(value: any, args: ValidationArguments) {
-        const [relatedPropertyName] = args.constraints;
-        const relatedValue = (args.object as any)[relatedPropertyName];
-        return value === relatedValue;
+            options: validationOptions,
+            validator: {
+                validate(value: string, args: ValidationArguments) {
+                    const [relatedPropertyName] = args.constraints;
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const relatedValue = (args.object as any)[relatedPropertyName];
+                    return value === relatedValue;
+                }
+            }
+        })
     }
-
 }
