@@ -1,0 +1,47 @@
+.ToDoList {
+    display: flex;
+    margin-top: 300px;
+    flex-direction: column;
+    height: 100vh;
+    align-items: center;
+
+    &-Header {
+        display: flex;
+        justify-content: space-between;
+        width: 30%;
+        margin-bottom: 20px;
+
+        span {
+            font-weight: bold;
+
+            &:last-child {
+                cursor: pointer;
+            }
+        }
+    }
+
+    &-Form {
+        width: 30%;
+
+        input {
+            text-align: center;
+            margin: 0;
+        }
+    }
+}
+
+table {
+    border-collapse: collapse;
+    width: 30%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    padding-left: 20px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}

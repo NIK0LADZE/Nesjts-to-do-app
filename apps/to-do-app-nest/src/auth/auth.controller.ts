@@ -8,9 +8,9 @@ export class AuthController {
     @Post()
     async signIn(@Body() user: AuthDTO) {
         const { username, password } = user;
-        const wasSignInSuccess = await this.authService.signIn(username, password);
+        const userInfo = await this.authService.signIn(username, password);
 
-        if (!wasSignInSuccess) throw new BadRequestException(['Invalid username or password']);
-        return { message: 'Authorization was successful!'};
+        if (!userInfo) throw new BadRequestException(['Invalid username or password']);
+        return { ...userInfo as object, message: 'Authorization was successful!'};
     }
 }

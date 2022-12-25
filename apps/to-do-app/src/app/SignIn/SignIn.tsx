@@ -1,8 +1,14 @@
+import { useNavigate } from "react-router-dom";
+
 /* eslint-disable-next-line */
-export interface SignInProps {};
+export interface SignInProps {
+  onSignIn: React.Dispatch<React.SetStateAction<boolean>>
+};
 
 export function SignIn(props: SignInProps) {
+  const navigate = useNavigate();
   const submitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
+    const { onSignIn } = props;
     const formData = Object.fromEntries(new FormData(event.currentTarget));
     event.preventDefault();
 
@@ -13,13 +19,16 @@ export function SignIn(props: SignInProps) {
         body: JSON.stringify(formData)
       });
 
-      const { message } = await response.json();
+      const { id, username, message } = await response.json();
 
       if (!response.ok) {
         alert(message)
         return;
       }
 
+      onSignIn(true);
+      navigate('/');
+      localStorage.setItem('user', JSON.stringify({ id, username }));
       (event.target as HTMLFormElement).reset();
       alert(message);
     })();

@@ -16,9 +16,9 @@ export class UsersService {
         const hashedPassword = bcryptPassword(password);
 
         return this.userModel.create({
-            username: username,
+            username,
             password: hashedPassword
-        })
+        });
     }
 
     async findByUsername(username: string): Promise<User> {
@@ -26,6 +26,6 @@ export class UsersService {
             where: {
                 username
             }
-        })
+        });
     }
 }

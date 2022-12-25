@@ -8,15 +8,16 @@ export class AuthService {
         private readonly userService: UsersService
     ) {}
 
-    async signIn(username: string, password: string): Promise<boolean> {
+    async signIn(username: string, password: string): Promise<boolean | object> {
         const user = await this.userService.findByUsername(username);
         const { password: hashedPassword } = user || {};
 
         if (user) {
+            const { dataValues: { id, username } } = user;
             const didMatch = comparePasswords(password, hashedPassword);
 
             if (didMatch) {
-                return true;
+                return { id, username };
             }
 
             return false;
