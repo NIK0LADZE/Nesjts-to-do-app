@@ -10,10 +10,21 @@ export class ToDoListService {
         private toDoListModel: typeof ToDo,
     ) {}
 
-    addToList(ToDoDto: ToDoDTO): Promise<ToDo> {
-        const { userId, title } = ToDoDto;
+    addToList(toDoDto: ToDoDTO): Promise<ToDo> {
+        const { userId, title } = toDoDto;
 
         return this.toDoListModel.create({ userId, title });
+    }
+
+    async updateToDo(toDoDto: ToDoDTO, id: number) {
+        const { title } = toDoDto;
+
+        return this.toDoListModel.update(
+            {
+                title
+            },
+            { where: { id } }
+        )
     }
 
     async getUserToDoList(userId: number): Promise<ToDo[]> {
@@ -24,10 +35,9 @@ export class ToDoListService {
         });
     }
 
-    async deleteToDoFromList(userId: number, id: number) {
+    async deleteToDoFromList(id: number) {
         return await this.toDoListModel.destroy({
             where: {
-                userId,
                 id
             }
         })

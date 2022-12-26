@@ -8,7 +8,6 @@ export class UsersController {
 
     @Post()
     addUser(@Body() user: UserDTO) {
-        console.log(user);
         this.usersService.create(user);
         return { message: 'Registration was successful!' };
     }
