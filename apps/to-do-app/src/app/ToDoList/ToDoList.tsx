@@ -22,7 +22,6 @@ const ToDoListComponent = (props: ToDoListProps) => {
 
     const submitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
         const formData = Object.fromEntries(new FormData(event.currentTarget));
-        const { title } = formData;
         event.preventDefault();
 
         (async () => {
@@ -32,6 +31,25 @@ const ToDoListComponent = (props: ToDoListProps) => {
                 body: JSON.stringify({ userId: Number(userId), ...formData })
             });
 
+            const { toDo: { id = '', title = '' } = {}, message } = await response.json();
+
+            if (!response.ok) {
+                alert(message)
+                return;
+            }
+
+            setToDoList([...toDoList, { id, title }]);
+            (event.target as HTMLFormElement).reset();
+        })();
+    }
+
+    const deleteHandler = (toDoId: number) => {
+        (async () => {
+            const response = await fetch(`http://localhost:3000/to-do-list/${userId}/${toDoId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
             const { message } = await response.json();
 
             if (!response.ok) {
@@ -39,8 +57,8 @@ const ToDoListComponent = (props: ToDoListProps) => {
                 return;
             }
 
-            setToDoList([...toDoList, { title: title.toString() }]);
-            (event.target as HTMLFormElement).reset();
+            const listAfterDelete: ToDoList[] = toDoList.filter(({ id }) => id !== toDoId);
+            setToDoList(listAfterDelete);
         })();
     }
 
@@ -53,23 +71,25 @@ const ToDoListComponent = (props: ToDoListProps) => {
     return (
         <div className={'ToDoList'}>
             <div className={'ToDoList-Header'}>
-                <span>User: {username}</span>
-                <span onClick={logoutHandler}>Logout</span>
+                <span>User: { username }</span>
+                <span onClick={ logoutHandler }>Logout</span>
             </div>
             <table>
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>What to do</th>
+                        <th colSpan={ 3 }>What to do</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {toDoList.map((toDo, index) => {
-                        const { title } = toDo;
+                    {toDoList.map((toDo) => {
+                        const { id, title } = toDo;
                         return (
-                            <tr key={index + 1}>
-                                <td>{index + 1}</td>
-                                <td>{title}</td>
+                            <tr key={ id }>
+                                <td>{ id }</td>
+                                <td>{ title }</td>
+                                <td className='Button'>Edit</td>
+                                <td className='Button' onClick={ () => deleteHandler(id)}>Delete</td>
                             </tr>
                         );
                     })}

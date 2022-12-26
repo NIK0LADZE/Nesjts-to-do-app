@@ -23,4 +23,13 @@ export class ToDoListService {
             }
         });
     }
+
+    async deleteToDoFromList(userId: number, id: number) {
+        return await this.toDoListModel.destroy({
+            where: {
+                userId,
+                id
+            }
+        })
+    }
 }

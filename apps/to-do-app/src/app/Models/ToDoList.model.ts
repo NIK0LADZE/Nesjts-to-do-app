@@ -1,4 +1,4 @@
 export interface ToDoList {
-    id?: number;
+    id: number;
     title: string;
 }
