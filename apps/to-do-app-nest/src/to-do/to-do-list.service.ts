@@ -15,4 +15,12 @@ export class ToDoListService {
 
         return this.toDoListModel.create({ userId, title });
     }
+
+    async getUserToDoList(userId: number): Promise<ToDo[]> {
+        return await this.toDoListModel.findAll({
+            where: {
+                userId
+            }
+        });
+    }
 }

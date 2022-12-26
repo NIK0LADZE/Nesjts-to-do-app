@@ -3,11 +3,11 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import GuestRoute from './GuestRoute/GuestRoute';
 import Register from './Register/Register';
 import SignIn from './SignIn/SignIn';
-import ToDoList from './ToDoList/ToDoList';
+import ToDoListComponent from './ToDoList/ToDoList';
 
 const ToDoRouteObject = (setIsSignedIn: React.Dispatch<React.SetStateAction<boolean>>) => ({
   path: "/",
-  element: <ToDoList onLogout={ setIsSignedIn } />,
+  element: <ToDoListComponent onLogout={ setIsSignedIn } />,
   children: [
     {
       path: "sign-in",
