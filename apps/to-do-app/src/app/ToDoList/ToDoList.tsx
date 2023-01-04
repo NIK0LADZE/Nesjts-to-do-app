@@ -36,7 +36,7 @@ const ToDoListComponent = (props: ToDoListProps) => {
             const response = await fetch(requestLink, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: Number(userId), ...formData })
+                body: JSON.stringify({ userId: +userId, ...formData })
             });
 
             const { toDo: { id = '', title = '' } = {}, message } = await response.json();
