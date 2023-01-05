@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { ToDo } from '../Models/ToDoList.model';
+import { ToDoInterface } from '@interfaces';
 import './ToDoList.scss';
+
+interface ToDo extends ToDoInterface {
+    id: number;
+}
 
 export interface ToDoListProps {
     onLogout: React.Dispatch<React.SetStateAction<boolean>>

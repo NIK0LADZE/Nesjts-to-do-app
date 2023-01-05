@@ -1,8 +1,9 @@
 import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
 import { Match } from "./decorators/Match.decorator";
 import { IsUsernameUnique } from "./decorators/IsUsernameUnique.decorator";
+import { UserInterface } from "@interfaces";
 
-export class UserDTO {
+export class UserDTO implements UserInterface {
     @IsString()
     @IsNotEmpty()
     @MinLength(4)
