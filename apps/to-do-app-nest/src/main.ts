@@ -11,9 +11,11 @@ import { useContainer } from 'class-validator';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
+  const globalPrefix = 'api';
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { abortOnError: false });
   const port = process.env.PORT || 3000;
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  app.setGlobalPrefix(globalPrefix);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

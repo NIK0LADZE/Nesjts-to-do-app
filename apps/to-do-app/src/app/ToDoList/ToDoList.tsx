@@ -20,7 +20,7 @@ const ToDoListComponent = (props: ToDoListProps) => {
 
     useEffect(() => {
         (async () => {
-            const response = await fetch(`http://localhost:3000/to-do-list/${userId}`);
+            const response = await fetch(`/api/to-do-list/${userId}`);
 
             const { toDoList } = await response.json();
             setToDoList(toDoList);
@@ -35,8 +35,8 @@ const ToDoListComponent = (props: ToDoListProps) => {
         (async () => {
             const method = isEditingToDoId ? 'PATCH' : 'POST';
             const requestLink = isEditingToDoId
-                ? `http://localhost:3000/to-do-list/${isEditingToDoId}`
-                : 'http://localhost:3000/to-do-list';
+                ? `/api/to-do-list/${isEditingToDoId}`
+                : '/api/to-do-list';
             const response = await fetch(requestLink, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
@@ -78,7 +78,7 @@ const ToDoListComponent = (props: ToDoListProps) => {
 
     const deleteHandler = (toDoId: number) => {
         (async () => {
-            const response = await fetch(`http://localhost:3000/to-do-list/${toDoId}`, {
+            const response = await fetch(`/api/to-do-list/${toDoId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' }
             });
