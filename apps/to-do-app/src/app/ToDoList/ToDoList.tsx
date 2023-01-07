@@ -25,7 +25,6 @@ const ToDoListComponent = (props: ToDoListProps) => {
 
         (async () => {
             try {
-                const { onLogout } = props;
                 const response = await fetchHelper({
                     fetchUrl: '/api/to-do-list',
                     method: 'GET',
@@ -35,9 +34,7 @@ const ToDoListComponent = (props: ToDoListProps) => {
                 const { toDoList, username, message } = await response.json();
 
                 if (!response.ok) {
-                    alert(message);
-                    onLogout(false);
-                    localStorage.removeItem(ACCESS_TOKEN);
+                    logoutHandler(message);
                     return;
                 }
 
@@ -59,7 +56,6 @@ const ToDoListComponent = (props: ToDoListProps) => {
         event.preventDefault();
 
         (async () => {
-            const { onLogout } = props;
             const method = isEditingToDoId ? 'PATCH' : 'POST';
             const fetchUrl = isEditingToDoId
                 ? `/api/to-do-list/${isEditingToDoId}`
@@ -73,9 +69,7 @@ const ToDoListComponent = (props: ToDoListProps) => {
             const { toDo: { id = '', title = '' } = {}, message } = await response.json();
 
             if (response.status === 401) {
-                alert(message);
-                onLogout(false);
-                localStorage.removeItem(ACCESS_TOKEN);
+                logoutHandler(message);
                 return;
             }
 
@@ -112,7 +106,6 @@ const ToDoListComponent = (props: ToDoListProps) => {
 
     const deleteHandler = (toDoId: number) => {
         (async () => {
-            const { onLogout } = props;
             const response = await fetchHelper({
                 fetchUrl: `/api/to-do-list/${toDoId}`,
                 method: 'DELETE',
@@ -121,9 +114,7 @@ const ToDoListComponent = (props: ToDoListProps) => {
             const { message } = await response.json();
 
             if (response.status === 401) {
-                alert(message);
-                onLogout(false);
-                localStorage.removeItem(ACCESS_TOKEN);
+                logoutHandler(message);
                 return;
             }
 
@@ -137,8 +128,9 @@ const ToDoListComponent = (props: ToDoListProps) => {
         })();
     }
 
-    const logoutHandler = () => {
+    const logoutHandler = (message?: string) => {
         const { onLogout } = props;
+        if (message) alert(message);
         localStorage.removeItem(ACCESS_TOKEN);
         onLogout(false);
     }
@@ -149,7 +141,7 @@ const ToDoListComponent = (props: ToDoListProps) => {
         <div className={'ToDoList'}>
             <div className={'ToDoList-Header'}>
                 <span>User: {username}</span>
-                <span onClick={logoutHandler}>Logout</span>
+                <span onClick={ () => logoutHandler()}>Logout</span>
             </div>
             <table>
                 <thead>
