@@ -16,13 +16,9 @@ export class ToDoListService {
         return this.toDoListModel.create({ userId, title });
     }
 
-    async updateToDo(toDoDto: ToDoDTO, id: number) {
-        const { title } = toDoDto;
-
+    async updateToDo(id: number, title: string) {
         return this.toDoListModel.update(
-            {
-                title
-            },
+            { title },
             { where: { id } }
         )
     }
@@ -30,6 +26,15 @@ export class ToDoListService {
     async getUserToDoList(userId: number): Promise<ToDo[]> {
         return await this.toDoListModel.findAll({
             where: {
+                userId
+            }
+        });
+    }
+
+    async getUserToDo(userId: number, toDoId: number): Promise<ToDo> {
+        return await this.toDoListModel.findOne({
+            where: {
+                id: toDoId,
                 userId
             }
         });

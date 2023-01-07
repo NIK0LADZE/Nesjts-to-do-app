@@ -2,8 +2,9 @@ import {
     Body,
     Controller,
     Delete,
+    ForbiddenException,
     Get,
-    InternalServerErrorException,
+    NotFoundException,
     Param,
     Patch,
     Post,
@@ -30,15 +31,19 @@ export class ToDoListController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Patch(':toDoId')
+    @Patch(':id')
     async update(
-        @Body() toDoObject: ToDoDTO,
-        @Param('toDoId') toDoId: number
+        @Body() { title }: ToDoDTO,
+        @Request() { user: { userId } },
+        @Param('id') id: number
     ) {
-        const [result] = await this.toDoService.updateToDo(toDoObject, toDoId);
+        const belongsToUser = await this.toDoService.getUserToDo(userId, id);
+        if (!belongsToUser) throw new ForbiddenException('You don\'t have access to this record');
+
+        const [result] = await this.toDoService.updateToDo(id, title);
 
         if (result === 0) {
-            throw new InternalServerErrorException('Record couldn\'t be updated');
+            throw new NotFoundException('Record couldn\'t be updated');
         }
 
         return { message: 'Record was updated successfully!' };
@@ -57,12 +62,18 @@ export class ToDoListController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Delete(':toDoId')
-    async deleteToDo(@Param('toDoId') toDoId: number) {
-        const result = await this.toDoService.deleteToDoFromList(toDoId);
+    @Delete(':id')
+    async deleteToDo(
+        @Param('id') id: number,
+        @Request() { user: { userId } }
+    ) {
+        const belongsToUser = await this.toDoService.getUserToDo(userId, id);
+        if (!belongsToUser) throw new ForbiddenException('You don\'t have access to this record');
+
+        const result = await this.toDoService.deleteToDoFromList(id);
 
         if (result === 0) {
-            throw new InternalServerErrorException('Record couldn\'t be deleted');
+            throw new NotFoundException('Record couldn\'t be deleted');
         }
 
         return { message: 'Record was deleted successfully!' };

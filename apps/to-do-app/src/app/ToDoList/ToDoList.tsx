@@ -78,9 +78,15 @@ const ToDoListComponent = (props: ToDoListProps) => {
 
             const { toDo: { id = '', title = '' } = {}, message } = await response.json();
 
-            if (!response.ok) {
+            if (response.status === 401) {
                 alert(message);
                 onLogout(false);
+                localStorage.removeItem(ACCESS_TOKEN);
+                return;
+            }
+
+            if (!response.ok) {
+                alert(message);
                 return;
             }
 
@@ -123,9 +129,15 @@ const ToDoListComponent = (props: ToDoListProps) => {
 
             const { message } = await response.json();
 
-            if (!response.ok) {
+            if (response.status === 401) {
                 alert(message);
                 onLogout(false);
+                localStorage.removeItem(ACCESS_TOKEN);
+                return;
+            }
+
+            if (!response.ok) {
+                alert(message);
                 return;
             }
 
