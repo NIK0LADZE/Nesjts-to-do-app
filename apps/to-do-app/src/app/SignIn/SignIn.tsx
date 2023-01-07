@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN } from "../constants";
+import { fetchHelper } from "../Utils/fetchHelper";
 
 /* eslint-disable-next-line */
 export interface SignInProps {
@@ -14,11 +15,11 @@ export function SignIn(props: SignInProps) {
     event.preventDefault();
 
     (async () => {
-      const response = await fetch('/api/auth', {
+      const response = await fetchHelper({
+        fetchUrl: '/api/auth',
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+        formData
+      })
 
       const { access_token, message } = await response.json();
 

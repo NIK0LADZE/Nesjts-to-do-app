@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { fetchHelper } from "../Utils/fetchHelper";
 
 /* eslint-disable-next-line */
 export interface RegisterProps {};
@@ -10,11 +11,11 @@ export function Register(props: RegisterProps) {
     event.preventDefault();
 
     (async () => {
-      const response = await fetch('/api/users', {
+      const response = await fetchHelper({
+        fetchUrl: '/api/users',
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+        formData
+      })
 
       const { message } = await response.json();
 

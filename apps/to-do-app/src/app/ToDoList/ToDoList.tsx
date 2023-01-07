@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { ToDoInterface } from '@interfaces';
 import './ToDoList.scss';
 import { ACCESS_TOKEN } from '../constants';
+import { fetchHelper } from '../Utils/fetchHelper';
 
 interface ToDo extends ToDoInterface {
     id: number;
@@ -18,7 +19,6 @@ const ToDoListComponent = (props: ToDoListProps) => {
     const [isEditingToDoId, setIsEditingToDoId] = useState<number | null>(null);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const titleInput = useRef<HTMLInputElement>(null!);
-    const access_token = localStorage.getItem(ACCESS_TOKEN);
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -26,14 +26,11 @@ const ToDoListComponent = (props: ToDoListProps) => {
         (async () => {
             try {
                 const { onLogout } = props;
-                const response = await fetch('/api/to-do-list', {
-                    signal: abortController.signal,
+                const response = await fetchHelper({
+                    fetchUrl: '/api/to-do-list',
                     method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${ access_token }`
-                    },
-                });
+                    signal: abortController.signal,
+                })
 
                 const { toDoList, username, message } = await response.json();
 
@@ -64,17 +61,14 @@ const ToDoListComponent = (props: ToDoListProps) => {
         (async () => {
             const { onLogout } = props;
             const method = isEditingToDoId ? 'PATCH' : 'POST';
-            const requestLink = isEditingToDoId
+            const fetchUrl = isEditingToDoId
                 ? `/api/to-do-list/${isEditingToDoId}`
                 : '/api/to-do-list';
-            const response = await fetch(requestLink, {
+            const response = await fetchHelper({
+                fetchUrl,
                 method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${ access_token }`
-                },
-                body: JSON.stringify({ ...formData })
-            });
+                formData
+            })
 
             const { toDo: { id = '', title = '' } = {}, message } = await response.json();
 
@@ -119,13 +113,10 @@ const ToDoListComponent = (props: ToDoListProps) => {
     const deleteHandler = (toDoId: number) => {
         (async () => {
             const { onLogout } = props;
-            const response = await fetch(`/api/to-do-list/${toDoId}`, {
+            const response = await fetchHelper({
+                fetchUrl: `/api/to-do-list/${toDoId}`,
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${ access_token }`
-                }
-            });
+            })
 
             const { message } = await response.json();
 
