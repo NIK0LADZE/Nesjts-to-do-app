@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { ToDoInterface } from '@interfaces';
 import './ToDoList.scss';
+import { ACCESS_TOKEN } from '../constants';
 
 interface ToDo extends ToDoInterface {
     id: number;
@@ -13,19 +14,47 @@ export interface ToDoListProps {
 
 const ToDoListComponent = (props: ToDoListProps) => {
     const [toDoList, setToDoList] = useState<ToDo[]>([]);
+    const [username, setUsername] = useState<string | null>(null);
     const [isEditingToDoId, setIsEditingToDoId] = useState<number | null>(null);
-    const { id: userId, username } = JSON.parse(localStorage.getItem('user') || 'false');
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const titleInput = useRef<HTMLInputElement>(null!);
+    const access_token = localStorage.getItem(ACCESS_TOKEN);
 
     useEffect(() => {
-        (async () => {
-            const response = await fetch(`/api/to-do-list/${userId}`);
+        const abortController = new AbortController();
 
-            const { toDoList } = await response.json();
-            setToDoList(toDoList);
+        (async () => {
+            try {
+                const { onLogout } = props;
+                const response = await fetch('/api/to-do-list', {
+                    signal: abortController.signal,
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${ access_token }`
+                    },
+                });
+
+                const { toDoList, username, message } = await response.json();
+
+                if (!response.ok) {
+                    alert(message);
+                    onLogout(false);
+                    localStorage.removeItem(ACCESS_TOKEN);
+                    return;
+                }
+
+                setUsername(username);
+                setToDoList(toDoList);
+            // eslint-disable-next-line no-empty
+            } catch (error) { }
         })();
-    }, [userId]);
+
+        return () => {
+            abortController.abort();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const submitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
         const formData = Object.fromEntries(new FormData(event.currentTarget));
@@ -33,20 +62,25 @@ const ToDoListComponent = (props: ToDoListProps) => {
         event.preventDefault();
 
         (async () => {
+            const { onLogout } = props;
             const method = isEditingToDoId ? 'PATCH' : 'POST';
             const requestLink = isEditingToDoId
                 ? `/api/to-do-list/${isEditingToDoId}`
                 : '/api/to-do-list';
             const response = await fetch(requestLink, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: +userId, ...formData })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${ access_token }`
+                },
+                body: JSON.stringify({ ...formData })
             });
 
             const { toDo: { id = '', title = '' } = {}, message } = await response.json();
 
             if (!response.ok) {
-                alert(message)
+                alert(message);
+                onLogout(false);
                 return;
             }
 
@@ -78,15 +112,20 @@ const ToDoListComponent = (props: ToDoListProps) => {
 
     const deleteHandler = (toDoId: number) => {
         (async () => {
+            const { onLogout } = props;
             const response = await fetch(`/api/to-do-list/${toDoId}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${ access_token }`
+                }
             });
 
             const { message } = await response.json();
 
             if (!response.ok) {
-                alert(message)
+                alert(message);
+                onLogout(false);
                 return;
             }
 
@@ -97,7 +136,7 @@ const ToDoListComponent = (props: ToDoListProps) => {
 
     const logoutHandler = () => {
         const { onLogout } = props;
-        localStorage.removeItem('userId');
+        localStorage.removeItem(ACCESS_TOKEN);
         onLogout(false);
     }
 

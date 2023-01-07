@@ -1,16 +1,14 @@
-import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
-import { AuthDTO } from "./auth.dto";
+import { Controller, Post, Request, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
+import { LocalAuthGuard } from "./local-auth.guard";
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
-    @Post()
-    async signIn(@Body() user: AuthDTO) {
-        const { username, password } = user;
-        const userInfo = await this.authService.signIn(username, password);
 
-        if (!userInfo) throw new BadRequestException(['Invalid username or password']);
-        return { ...userInfo as object, message: 'Authorization was successful!'};
+    @UseGuards(LocalAuthGuard)
+    @Post()
+    signIn(@Request() req) {
+        return this.authService.signIn(req.user);
     }
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { ACCESS_TOKEN } from './constants';
 import GuestRoute from './GuestRoute/GuestRoute';
 import Register from './Register/Register';
 import SignIn from './SignIn/SignIn';
@@ -36,8 +37,8 @@ const router = (isSignedIn: boolean, setIsSignedIn: React.Dispatch<React.SetStat
 ])
 
 export function App() {
-  const { id: userId } = JSON.parse(localStorage.getItem('user') || 'false');
-  const [isSignedIn, setIsSignedIn] = useState(!!userId);
+  const access_token = localStorage.getItem(ACCESS_TOKEN);
+  const [isSignedIn, setIsSignedIn] = useState(!!access_token);
   return (<RouterProvider router={router(isSignedIn, setIsSignedIn)} />);
 }
 

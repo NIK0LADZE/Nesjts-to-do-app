@@ -1,18 +1,35 @@
-import { Body, Controller, Delete, Get, InternalServerErrorException, Param, Patch, Post } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    InternalServerErrorException,
+    Param,
+    Patch,
+    Post,
+    Request,
+    UseGuards
+} from '@nestjs/common';
 import { ToDoDTO } from './to-do.dto';
 import { ToDoListService } from './to-do-list.service';
 import { ToDo } from './to-do.model';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('to-do-list')
 export class ToDoListController {
     constructor(private readonly toDoService: ToDoListService) { }
 
+    @UseGuards(JwtAuthGuard)
     @Post()
-    async create(@Body() toDoObject: ToDoDTO) {
-        const result = await this.toDoService.addToList(toDoObject);
+    async create(
+            @Body() { title }: ToDoDTO,
+            @Request() { user: { userId } }
+        ) {
+        const result = await this.toDoService.addToList({ userId, title });
         return { toDo: result };
     }
 
+    @UseGuards(JwtAuthGuard)
     @Patch(':toDoId')
     async update(
         @Body() toDoObject: ToDoDTO,
@@ -27,17 +44,19 @@ export class ToDoListController {
         return { message: 'Record was updated successfully!' };
     }
 
-    @Get(':userId')
-    async getUserToDoList(@Param('userId') userId: number) {
+    @UseGuards(JwtAuthGuard)
+    @Get()
+    async getUserToDoList(@Request() { user: { userId, username } }) {
         const toDoList = (await this.toDoService.getUserToDoList(userId)).map((toDo: ToDo) => {
             const { dataValues: { id, title } } = toDo;
             return { id, title };
         });
 
         toDoList.sort(({ id }, { id: nextId }) => id < nextId && -1)
-        return { toDoList };
+        return { toDoList, username };
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete(':toDoId')
     async deleteToDo(@Param('toDoId') toDoId: number) {
         const result = await this.toDoService.deleteToDoFromList(toDoId);

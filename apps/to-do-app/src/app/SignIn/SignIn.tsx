@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { ACCESS_TOKEN } from "../constants";
 
 /* eslint-disable-next-line */
 export interface SignInProps {
@@ -19,7 +20,7 @@ export function SignIn(props: SignInProps) {
         body: JSON.stringify(formData)
       });
 
-      const { id, username, message } = await response.json();
+      const { access_token, message } = await response.json();
 
       if (!response.ok) {
         alert(message)
@@ -28,7 +29,7 @@ export function SignIn(props: SignInProps) {
 
       onSignIn(true);
       navigate('/');
-      localStorage.setItem('user', JSON.stringify({ id, username }));
+      localStorage.setItem(ACCESS_TOKEN, access_token);
       (event.target as HTMLFormElement).reset();
       alert(message);
     })();

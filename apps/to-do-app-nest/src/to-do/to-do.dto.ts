@@ -1,10 +1,8 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { UserToDo } from "./to-do.model";
+import { IsNotEmpty, IsString } from "class-validator";
+import { ToDoInterface } from '@interfaces';
 
-export class ToDoDTO implements UserToDo {
-    @IsNotEmpty()
-    @IsNumber()
-    userId: number;
+export class ToDoDTO implements ToDoInterface {
+    userId?: number;
 
     @IsNotEmpty()
     @IsString()
