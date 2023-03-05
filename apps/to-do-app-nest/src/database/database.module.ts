@@ -8,7 +8,8 @@ import { User } from '../users/user.model';
     imports: [
         SequelizeModule.forRoot({
             ...databaseConfig[process.env.NODE_ENV],
-            models: [User, ToDo]
+            models: [User, ToDo],
+            autoLoadModels: true
         })
     ]
 })
